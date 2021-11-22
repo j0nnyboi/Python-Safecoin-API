@@ -6,9 +6,7 @@ import time
 import base58
 from safecoin.keypair import Keypair
 from safecoin.rpc.api import Client
-from metaplex.metadata import get_metadata
 from cryptography.fernet import Fernet
-from api.metaplex_api import MetaplexAPI
 
 def await_full_confirmation(client, txn, max_timeout=60):
     if txn is None:
