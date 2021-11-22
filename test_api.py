@@ -6,7 +6,15 @@ import time
 import base58
 from safecoin.keypair import Keypair
 from safecoin.rpc.api import Client
-from cryptography.fernet import Fernet
+
+############################################ Config Section ###########################################
+
+api_endpoint="https://api.devnet.safecoin.org"#point to devnet to test
+Wallet_Address = "#WalletAddress"#add your wallet addrsss
+topup = False #True if you want to topup
+topupamount = 10 # amount to topup
+
+#######################################################################################################
 
 def await_full_confirmation(client, txn, max_timeout=60):
     if txn is None:
@@ -56,13 +64,6 @@ def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
 
         
 
-
-    
-
-api_endpoint="https://api.devnet.safecoin.org"#point to devnet to test
-Wallet_Address = "#WalletAddress"#add your wallet addrsss
-topup = False #True if you want to topup
-topupamount = 10 # amount to topup
 WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
 print("Success!")
 
