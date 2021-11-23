@@ -17,7 +17,6 @@ Wallet_Address = "Wallet Addresss"
 topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
-######################### Safecoin Donations taken at es7DKe3NyR1u8MJNuv6QV6rbhmZQkyYUpgKpGJNuTTc ############################
 ##############################################################################################################################
 
 def await_full_confirmation(client, txn, max_timeout=60):
