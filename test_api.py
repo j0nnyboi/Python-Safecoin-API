@@ -6,12 +6,16 @@ import time
 import base58
 from safecoin.keypair import Keypair
 from safecoin.rpc.api import Client
+from metaplex.metadata import get_metadata
+from cryptography.fernet import Fernet
+from api.metaplex_api import MetaplexAPI
+
 
 ############################################ Config Section ###########################################
 
 api_endpoint="https://api.devnet.safecoin.org"#point to devnet to test
-Wallet_Address = "#WalletAddress"#add your wallet addrsss
-topup = False #True if you want to topup
+Wallet_Address = "#es7DKe3NyR1u8MJNuv6QV6rbhmZQkyYUpgKpGJNuTTc"#add your wallet addrsss
+topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
 #######################################################################################################
@@ -35,13 +39,21 @@ def await_full_confirmation(client, txn, max_timeout=60):
 def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
     
     keypair = Keypair()
+    cfg = {
+        "PRIVATE_KEY": base58.b58encode(keypair.seed).decode("ascii"),
+        "PUBLIC_KEY": str(keypair.public_key),
+        "DECRYPTION_KEY": Fernet.generate_key().decode("ascii"),
+    }
+    api = MetaplexAPI(cfg)
     client = Client(api_endpoint)
     print("Connected to %s :" % api_endpoint, client.is_connected())
     if(client.is_connected()):
+        
         if(topup == True):
             resp = {}
             while 'result' not in resp:
                 resp = client.request_airdrop(Wallet_Address,topupamount * 1000000000)
+                print(resp)
             txn = resp['result']
             await_full_confirmation(client, txn)
             print(resp)
@@ -61,10 +73,80 @@ def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
     else:
         print("cannot connect to ",api_endpoint)
 
-
+def test(api_endpoint="https://api.devnet.safecoin.org/"):
+    keypair = Keypair()
+    cfg = {
+        "PRIVATE_KEY": base58.b58encode(keypair.seed).decode("ascii"),
+        "PUBLIC_KEY": str(keypair.public_key),
+        "DECRYPTION_KEY": Fernet.generate_key().decode("ascii"),
+    }
+    api = MetaplexAPI(cfg)
+    client = Client(api_endpoint)
+    resp = {}
+    while 'result' not in resp:
+        resp = client.request_airdrop(keypair.public_key, int(1e9))
+    print("Request Airdrop:", resp)
+    txn = resp['result']
+    await_full_confirmation(client, txn)
+    letters = string.ascii_uppercase
+    name = ''.join([random.choice(letters) for i in range(32)])
+    symbol = ''.join([random.choice(letters) for i in range(10)])
+    print("Name:", name)
+    print("Symbol:", symbol)
+    # added seller_basis_fee_points
+    deploy_response = json.loads(api.deploy(api_endpoint, name, symbol, 0))
+    print("Deploy:", deploy_response)
+    assert deploy_response["status"] == 200
+    contract = deploy_response.get("contract")
+    print("contract", contract)
+    print(get_metadata(client, contract))
+    wallet = json.loads(api.wallet())
+    address1 = wallet.get('address')
+    encrypted_pk1 = api.cipher.encrypt(bytes(wallet.get('private_key')))
+    topup_response = json.loads(api.topup(api_endpoint, address1))
+    print(f"Topup {address1}:", topup_response)
+    assert topup_response["status"] == 200
+    mint_to_response = json.loads(api.mint(api_endpoint, contract, address1, "https://arweave.net/1eH7bZS-6HZH4YOc8T_tGp2Rq25dlhclXJkoa6U55mM/"))
+    print("Mint:", mint_to_response)
+    # await_confirmation(client, mint_to_response['tx'])
+    assert mint_to_response["status"] == 200
+    print(get_metadata(client, contract))
+    wallet2 = json.loads(api.wallet())
+    address2 = wallet2.get('address')
+    encrypted_pk2 = api.cipher.encrypt(bytes(wallet2.get('private_key')))
+    print(client.request_airdrop(api.public_key, int(1e10)))
+    topup_response2 = json.loads(api.topup(api_endpoint, address2))
+    print(f"Topup {address2}:", topup_response2)
+    # await_confirmation(client, topup_response2['tx'])
+    assert topup_response2["status"] == 200
+    send_response = json.loads(api.send(api_endpoint, contract, address1, address2, encrypted_pk1))
+    assert send_response["status"] == 200
+    # await_confirmation(client, send_response['tx'])
+    burn_response = json.loads(api.burn(api_endpoint, contract, address2, encrypted_pk2))
+    print("Burn:", burn_response)
+    # await_confirmation(client, burn_response['tx'])
+    assert burn_response["status"] == 200
+    print("Success!")
         
 
 WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
 print("Success!")
 
+################################################## once metaplex is added to chain ( my next job )################################################# 
+""" 
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--network", default=None)
+    args = ap.parse_args()
+    if args.network == None or args.network == 'devnet':
+        test()
+    elif args.network == 'devnet':
+        test(api_endpoint="https://api.devnet.safecoin.org/")
+    elif args.network == 'mainnet':
+        test(api_endpoint="https://api.mainnet-beta.safecoin.com/")
+    else:
+        print("Invalid network argument supplied")
+
+"""
+######################################################################################################################################################
 
