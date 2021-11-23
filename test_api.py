@@ -10,14 +10,15 @@ from metaplex.metadata import get_metadata
 from cryptography.fernet import Fernet
 from api.metaplex_api import MetaplexAPI
 
-#################################################################################
+############################################## Config Wallet and or endpoint ################################################
 
 api_endpoint="https://api.devnet.safecoin.org"
 Wallet_Address = "Wallet Addresss"
 topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
-###################################################################################
+######################### Safecoin Donations taken at es7DKe3NyR1u8MJNuv6QV6rbhmZQkyYUpgKpGJNuTTc ############################
+##############################################################################################################################
 
 def await_full_confirmation(client, txn, max_timeout=60):
     if txn is None:
