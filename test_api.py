@@ -128,7 +128,7 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     assert topup_response["status"] == 200
     mint_to_response = json.loads(api.mint(api_endpoint, contract, address1, "https://arweave.net/1eH7bZS-6HZH4YOc8T_tGp2Rq25dlhclXJkoa6U55mM/"))
     print("Mint:", mint_to_response)
-    # await_confirmation(client, mint_to_response['tx'])
+    await_confirmation(client, mint_to_response['tx'])
     assert mint_to_response["status"] == 200
     print(get_metadata(client, contract))
     wallet2 = json.loads(api.wallet())
@@ -137,21 +137,22 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     print(client.request_airdrop(api.public_key, int(1e10)))
     topup_response2 = json.loads(api.topup(api_endpoint, address2))
     print(f"Topup {address2}:", topup_response2)
-    # await_confirmation(client, topup_response2['tx'])
+    await_confirmation(client, topup_response2['tx'])
     assert topup_response2["status"] == 200
     send_response = json.loads(api.send(api_endpoint, contract, address1, address2, encrypted_pk1))
     assert send_response["status"] == 200
-    # await_confirmation(client, send_response['tx'])
+    await_confirmation(client, send_response['tx'])
     burn_response = json.loads(api.burn(api_endpoint, contract, address2, encrypted_pk2))
     print("Burn:", burn_response)
-    # await_confirmation(client, burn_response['tx'])
+    await_confirmation(client, burn_response['tx'])
     assert burn_response["status"] == 200
     print("Success!")
 
 
 WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
-print("Success!")
-"""
+print("Success! topping up wallet")
+
+print("Now going to mint transfer and burn")
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--network", default=None)
@@ -161,7 +162,7 @@ if __name__ == "__main__":
     elif args.network == 'devnet':
         test(api_endpoint="https://api.devnet.safecoin.org/")
     elif args.network == 'mainnet':
-        test(api_endpoint="https://api.mainnet-beta.safecoin.com/")
+        test(api_endpoint="https://api.mainnet-beta.safecoin.org/")
     else:
         print("Invalid network argument supplied")
 
