@@ -149,7 +149,7 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     print("Success!")
 
 
-WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
+#WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
 print("Success! topping up wallet")
 
 print("Now going to mint transfer and burn")
@@ -166,4 +166,4 @@ if __name__ == "__main__":
     else:
         print("Invalid network argument supplied")
 
-"""
+
