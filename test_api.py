@@ -13,7 +13,7 @@ from api.metaplex_api import MetaplexAPI
 ############################################## Config Wallet and or endpoint ################################################
 
 api_endpoint="https://api.devnet.safecoin.org"
-Wallet_Address = "Wallet Addresss"
+Wallet_Address = "3RvTHb2c3bAZgkfhqBhgyi2csQWixiypL2grjSkVDRBD"#"Wallet Addresss"
 topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
@@ -81,7 +81,7 @@ def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
     
     account = Keypair()
     cfg = {"PRIVATE_KEY": base58.b58encode(account.seed).decode("ascii"), "PUBLIC_KEY": Wallet_Address, "DECRYPTION_KEY": Fernet.generate_key().decode("ascii")}
-    #api_endpoint = "https://api.devnet.solana.com/"*
+    #api_endpoint = "https://api.devnet.safecoin.org/"
     Client(api_endpoint).request_airdrop(account.public_key, int(1e10))
     #{'jsonrpc': '2.0', 'result': '4ojKmAAesmKtqJkNLRtEjdgg4CkmowuTAjRSpp3K36UvQQvEXwhirV85E8cvWYAD42c3UyFdCtzydMgWokH2mbM', 'id': 1}
     metaplex_api = MetaplexAPI(cfg)
@@ -105,7 +105,7 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     resp = {}
     while 'result' not in resp:
         resp = client.request_airdrop(keypair.public_key, int(1e9))
-    print("Request Airdrop:", resp)
+    print("Request Airdrop:",keypair.public_key, resp)
     txn = resp['result']
     await_full_confirmation(client, txn)
     letters = string.ascii_uppercase
