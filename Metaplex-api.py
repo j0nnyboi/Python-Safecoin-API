@@ -17,6 +17,9 @@ Wallet_Address = "3RvTHb2c3bAZgkfhqBhgyi2csQWixiypL2grjSkVDRBD"#"Wallet Addresss
 topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
+
+#There is no try again if fails implerment, so if it failes at the moment you will nned to try again
+
 ##############################################################################################################################
 
 def await_full_confirmation(client, txn, max_timeout=60):
