@@ -18,7 +18,7 @@ topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
 
-#There is no try again if fails implerment, so if it failes at the moment you will nned to try again
+#There is no try again if fails, so if it failes at the moment you will need to try again, this might require afew attempts
 
 ##############################################################################################################################
 
