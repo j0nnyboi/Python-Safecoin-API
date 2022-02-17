@@ -49,6 +49,7 @@ def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
     api = MetaplexAPI(cfg)
     client = Client(api_endpoint)
     print("Connected to %s :" % api_endpoint, client.is_connected())
+    print("")
     if(client.is_connected()):
         
         if(topup == True):
@@ -57,19 +58,21 @@ def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
                 resp = client.request_airdrop(Wallet_Address,topupamount * 1000000000)
             txn = resp['result']
             await_full_confirmation(client, txn)
-            print(resp)
+            #print(resp)
             print("Topup complete")
+            print("")
         resp = client.get_balance(Wallet_Address)
         print("balance = ", int(resp['result']['value']) / 1000000000)
         resp = client.get_account_info(Wallet_Address)
         print("")
         print("Wallet info ")
-        print(resp)
+        #print(resp)
         print("")
         print("Cluster Nodes ")
         print(client.get_cluster_nodes())
         print("")
         print("EPOCH info = ",client.get_epoch_info())
+        print("")
         
     else:
         print("cannot connect to ",api_endpoint)
@@ -108,7 +111,7 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     resp = {}
     while 'result' not in resp:
         resp = client.request_airdrop(keypair.public_key, int(1e9))
-    print("Request Airdrop:",keypair.public_key, resp)
+    #print("Request Airdrop:",keypair.public_key, resp)    
     txn = resp['result']
     await_full_confirmation(client, txn)
     letters = string.ascii_uppercase
@@ -116,30 +119,33 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     symbol = ''.join([random.choice(letters) for i in range(10)])
     print("Name:", name)
     print("Symbol:", symbol)
+    print("")
     # added seller_basis_fee_points
     deploy_response = json.loads(api.deploy(api_endpoint, name, symbol, 0))
-    print("Deploy:", deploy_response)
+    #print("Deploy:", deploy_response)
     assert deploy_response["status"] == 200
     contract = deploy_response.get("contract")
     print("contract", contract)
+    print("")
     print(get_metadata(client, contract))
     wallet = json.loads(api.wallet())
     address1 = wallet.get('address')
     encrypted_pk1 = api.cipher.encrypt(bytes(wallet.get('private_key')))
     topup_response = json.loads(api.topup(api_endpoint, address1))
-    print(f"Topup {address1}:", topup_response)
+    #print(f"Topup {address1}:", topup_response)
     assert topup_response["status"] == 200
     mint_to_response = json.loads(api.mint(api_endpoint, contract, address1, "https://arweave.net/1eH7bZS-6HZH4YOc8T_tGp2Rq25dlhclXJkoa6U55mM/"))
     print("Mint:", mint_to_response)
+    print("")
     #await_full_confirmation(client, mint_to_response['tx'])
     assert mint_to_response["status"] == 200
-    print(get_metadata(client, contract))
+    #print(get_metadata(client, contract))
     wallet2 = json.loads(api.wallet())
     address2 = wallet2.get('address')
     encrypted_pk2 = api.cipher.encrypt(bytes(wallet2.get('private_key')))
-    print(client.request_airdrop(api.public_key, int(1e10)))
+    #print(client.request_airdrop(api.public_key, int(1e10)))
     topup_response2 = json.loads(api.topup(api_endpoint, address2))
-    print(f"Topup {address2}:", topup_response2)
+    #print(f"Topup {address2}:", topup_response2)
     #await_full_confirmation(client, topup_response2['tx'])
     assert topup_response2["status"] == 200
     send_response = json.loads(api.send(api_endpoint, contract, address1, address2, encrypted_pk1))
@@ -147,15 +153,19 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     #await_full_confirmation(client, send_response['tx'])
     burn_response = json.loads(api.burn(api_endpoint, contract, address2, encrypted_pk2))
     print("Burn:", burn_response)
+    print("")
     #await_full_confirmation(client, burn_response['tx'])
     assert burn_response["status"] == 200
-    print("Success!")
+    print("Create, Mint, Send, Burn, Success!")
 
 
-#WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
+WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
+print("")
 print("Success! topping up wallet")
+print("")
 
 print("Now going to mint transfer and burn")
+print("")
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--network", default=None)

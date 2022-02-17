@@ -126,7 +126,7 @@ class Client(_ClientCore):  # pylint: disable=too-many-public-methods
         args = self._get_account_info_args(
             pubkey=pubkey, commitment=commitment, encoding=encoding, data_slice=data_slice
         )
-        print("pubKey: ", args)
+        #print("pubKey: ", args)
         return self._provider.make_request(*args)
 
     def get_block_commitment(self, slot: int) -> types.RPCResponse:

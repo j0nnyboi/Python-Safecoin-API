@@ -32,7 +32,7 @@ class MetaplexAPI():
         """
         try:
             tx, signers, contract = deploy(api_endpoint, self.keypair, name, symbol, fees)
-            print(contract)
+            #print(contract)
             resp = execute(
                 api_endpoint,
                 tx,
