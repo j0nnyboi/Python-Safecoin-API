@@ -14,6 +14,7 @@ from api.metaplex_api import MetaplexAPI
 
 api_endpoint="https://api.devnet.safecoin.org"
 Wallet_Address = "3RvTHb2c3bAZgkfhqBhgyi2csQWixiypL2grjSkVDRBD"#"Wallet Addresss"
+Mint_Address = "9NuJbgzZA4JQfzDi2zKqJUKDWLhLcPLLoySCTDs43toS"
 topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
@@ -99,7 +100,7 @@ def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
     """
     
 
-def test(api_endpoint="https://api.devnet.safecoin.org/"):
+def test(api_endpoint="https://api.testnet.safecoin.org/"):
     keypair = Keypair()
     cfg = {
         "PRIVATE_KEY": base58.b58encode(keypair.seed).decode("ascii"),
@@ -109,6 +110,8 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     api = MetaplexAPI(cfg)
     client = Client(api_endpoint)
     resp = {}
+    print(get_metadata(client,Mint_Address))
+    """
     while 'result' not in resp:
         resp = client.request_airdrop(keypair.public_key, int(1e9))
     #print("Request Airdrop:",keypair.public_key, resp)    
@@ -157,15 +160,16 @@ def test(api_endpoint="https://api.devnet.safecoin.org/"):
     #await_full_confirmation(client, burn_response['tx'])
     assert burn_response["status"] == 200
     print("Create, Mint, Send, Burn, Success!")
+    """
 
 
-WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
-print("")
-print("Success! topping up wallet")
-print("")
+#WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
+#print("")
+#print("Success! topping up wallet")
+#print("")
 
-print("Now going to mint transfer and burn")
-print("")
+#print("Now going to mint transfer and burn")
+#print("")
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--network", default=None)
