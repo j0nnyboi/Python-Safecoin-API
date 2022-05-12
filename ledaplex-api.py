@@ -6,7 +6,7 @@ import time
 import base58
 from safecoin.keypair import Keypair
 from safecoin.rpc.api import Client
-from ledaplex.metadata import get_metadata
+from ledaplex.metadata import get_metadata,get_metadata_account
 from cryptography.fernet import Fernet
 from api.ledaplex_api import LedaplexAPI
 
@@ -139,11 +139,12 @@ def test_mint_tran_burn(api_endpoint="https://api.testnet.safecoin.org/"):
 def test_get_mintData():
     client = Client(api_endpoint)
     print(get_metadata(client,Mint_Address))#gets metadata for a given mint address
+    print(get_metadata_account(Mint_Address))
 
 
 
 ######## Safecoin Chain only #####################################
-WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
+#WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
 print("")
 print("Success! topping up wallet")
 print("")
@@ -151,7 +152,7 @@ print("")
 ################ metaplex programs ###############################
 print("Now going to mint transfer and burn")
 print("")
-test_mint_tran_burn()
+#test_mint_tran_burn()
 print("")
 print("Getting Mint data")
 test_get_mintData()

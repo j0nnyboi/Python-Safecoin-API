@@ -1,1 +1,1 @@
-"""Solana Program Library packages."""
+"""Safecoin Program Library packages."""
