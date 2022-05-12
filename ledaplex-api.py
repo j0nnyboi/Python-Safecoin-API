@@ -13,8 +13,8 @@ from api.ledaplex_api import LedaplexAPI
 ############################################## Config Wallet and or endpoint ################################################
 
 api_endpoint="https://api.testnet.safecoin.org"
-Wallet_Address = "3RvTHb2c3bAZgkfhqBhgyi2csQWixiypL2grjSkVDRBD"#"Wallet Addresss"
-Mint_Address = "9NuJbgzZA4JQfzDi2zKqJUKDWLhLcPLLoySCTDs43toS"#NFT Mint Address
+Wallet_Address = "24n6hzEPP69hX2kg168APr7nWLsWM4sbeY6zS2vYFSh1"#"Wallet Address"
+Mint_Address = "9NuJbgzZA4JQfzDi2zKqJUKDWLhLcPLLoySCTDs43toS"#NFT Mint Address if you need to get just 1
 topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
@@ -138,13 +138,25 @@ def test_mint_tran_burn(api_endpoint="https://api.testnet.safecoin.org/"):
     
 def test_get_mintData():
     client = Client(api_endpoint)
-    print(get_metadata(client,Mint_Address))#gets metadata for a given mint address
-    print(get_metadata_account(Mint_Address))
+    print("getting the given mint address info")
+    #print(get_metadata(client,Mint_Address))#gets metadata for a given mint address
+    print("getting all mints for the given wallet")
+    walletData = client.get_confirmed_signature_for_address2(Wallet_Address)['result']
+    for Data in walletData:
+        #print(Data['signature'])
+        resp = client.get_confirmed_transaction(Data['signature'])
+        MintData = resp['result']['meta']["postTokenBalances"]
+        if(len(MintData) > 0):
+            try:
+                MintKey = MintData[0]['mint']
+                print(get_metadata(client,MintKey))
+            except:
+                continue
 
 
 
 ######## Safecoin Chain only #####################################
-#WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
+WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
 print("")
 print("Success! topping up wallet")
 print("")
@@ -152,7 +164,7 @@ print("")
 ################ metaplex programs ###############################
 print("Now going to mint transfer and burn")
 print("")
-#test_mint_tran_burn()
+test_mint_tran_burn()
 print("")
 print("Getting Mint data")
 test_get_mintData()
