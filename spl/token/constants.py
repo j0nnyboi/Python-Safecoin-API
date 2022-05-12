@@ -18,7 +18,7 @@ TOKEN_PROGRAM_ID: PublicKey = PublicKey("ToKLx75MGim1d1jRusuVX8xvdvvbSDESVaNXpRA
 """Public key that identifies the SPL token program."""
 
 WRAPPED_SOL_MINT: PublicKey = PublicKey("Safe111111111111111111111111111111111111111")
-"""Public key of the "Native Mint" for wrapping SOL to SPL token.
+"""Public key of the "Native Mint" for wrapping SAFE to SPL token.
 
 The Token Program can be used to wrap native SOL. Doing so allows native SOL to be treated like any
 other Token program token type and can be useful when being called from other programs that interact

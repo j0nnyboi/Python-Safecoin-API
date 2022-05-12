@@ -6,15 +6,15 @@ import time
 import base58
 from safecoin.keypair import Keypair
 from safecoin.rpc.api import Client
-from metaplex.metadata import get_metadata
+from ledaplex.metadata import get_metadata
 from cryptography.fernet import Fernet
-from api.metaplex_api import MetaplexAPI
+from api.ledaplex_api import LedaplexAPI
 
 ############################################## Config Wallet and or endpoint ################################################
 
-api_endpoint="https://api.devnet.safecoin.org"
+api_endpoint="https://api.testnet.safecoin.org"
 Wallet_Address = "3RvTHb2c3bAZgkfhqBhgyi2csQWixiypL2grjSkVDRBD"#"Wallet Addresss"
-Mint_Address = "9NuJbgzZA4JQfzDi2zKqJUKDWLhLcPLLoySCTDs43toS"
+Mint_Address = "9NuJbgzZA4JQfzDi2zKqJUKDWLhLcPLLoySCTDs43toS"#NFT Mint Address
 topup = True #True if you want to topup
 topupamount = 10 # amount to topup
 
@@ -40,14 +40,7 @@ def await_full_confirmation(client, txn, max_timeout=60):
 
 
 def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
-    
-    keypair = Keypair()
-    cfg = {
-        "PRIVATE_KEY": base58.b58encode(keypair.seed).decode("ascii"),
-        "PUBLIC_KEY": str(keypair.public_key),
-        "DECRYPTION_KEY": Fernet.generate_key().decode("ascii"),
-    }
-    api = MetaplexAPI(cfg)
+    print("Connecting to Safecoin chain")
     client = Client(api_endpoint)
     print("Connected to %s :" % api_endpoint, client.is_connected())
     print("")
@@ -82,36 +75,18 @@ def WalletConnect(api_endpoint,Wallet_Address,topup,topupamount):
         #print(resp)
 
 
-        
-    """
-    ##
-    
-    account = Keypair()
-    cfg = {"PRIVATE_KEY": base58.b58encode(account.seed).decode("ascii"), "PUBLIC_KEY": Wallet_Address, "DECRYPTION_KEY": Fernet.generate_key().decode("ascii")}
-    #api_endpoint = "https://api.devnet.safecoin.org/"
-    Client(api_endpoint).request_airdrop(account.public_key, int(1e10))
-    #{'jsonrpc': '2.0', 'result': '4ojKmAAesmKtqJkNLRtEjdgg4CkmowuTAjRSpp3K36UvQQvEXwhirV85E8cvWYAD42c3UyFdCtzydMgWokH2mbM', 'id': 1}
-    metaplex_api = MetaplexAPI(cfg)
-    seller_basis_fees = 0 # value in 10000
-    REC = metaplex_api.deploy(api_endpoint, "A"*32, "A"*10, seller_basis_fees)
-    print(REC)
-    #'{"status": 200, "contract": "7bxe7t1aGdum8o97bkuFeeBTcbARaBn9Gbv5sBd9DZPG", "msg": "Successfully created mint 7bxe7t1aGdum8o97bkuFeeBTcbARaBn9Gbv5sBd9DZPG", "tx": "2qmiWoVi2PNeAjppe2cNbY32zZCJLXMYgdS1zRVFiKJUHE41T5b1WfaZtR2QdFJUXadrqrjbkpwRN5aG2J3KQrQx"}'
-
-    """
     
 
-def test(api_endpoint="https://api.testnet.safecoin.org/"):
+def test_mint_tran_burn(api_endpoint="https://api.testnet.safecoin.org/"):
     keypair = Keypair()
     cfg = {
         "PRIVATE_KEY": base58.b58encode(keypair.seed).decode("ascii"),
         "PUBLIC_KEY": str(keypair.public_key),
         "DECRYPTION_KEY": Fernet.generate_key().decode("ascii"),
     }
-    api = MetaplexAPI(cfg)
+    api = LedaplexAPI(cfg)
     client = Client(api_endpoint)
     resp = {}
-    print(get_metadata(client,Mint_Address))
-    """
     while 'result' not in resp:
         resp = client.request_airdrop(keypair.public_key, int(1e9))
     #print("Request Airdrop:",keypair.public_key, resp)    
@@ -160,27 +135,28 @@ def test(api_endpoint="https://api.testnet.safecoin.org/"):
     #await_full_confirmation(client, burn_response['tx'])
     assert burn_response["status"] == 200
     print("Create, Mint, Send, Burn, Success!")
-    """
+    
+def test_get_mintData():
+    client = Client(api_endpoint)
+    print(get_metadata(client,Mint_Address))#gets metadata for a given mint address
 
 
-#WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
-#print("")
-#print("Success! topping up wallet")
-#print("")
 
-#print("Now going to mint transfer and burn")
-#print("")
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--network", default=None)
-    args = ap.parse_args()
-    if args.network == None or args.network == 'devnet':
-        test()
-    elif args.network == 'devnet':
-        test(api_endpoint="https://api.devnet.safecoin.org/")
-    elif args.network == 'mainnet':
-        test(api_endpoint="https://api.mainnet-beta.safecoin.org/")
-    else:
-        print("Invalid network argument supplied")
+######## Safecoin Chain only #####################################
+WalletConnect(api_endpoint,Wallet_Address,topup,topupamount)
+print("")
+print("Success! topping up wallet")
+print("")
+
+################ metaplex programs ###############################
+print("Now going to mint transfer and burn")
+print("")
+test_mint_tran_burn()
+print("")
+print("Getting Mint data")
+test_get_mintData()
+print("Completed")
+
+
 
 

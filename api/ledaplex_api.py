@@ -2,10 +2,10 @@ import json
 from cryptography.fernet import Fernet
 import base58
 from safecoin.keypair import Keypair 
-from metaplex.transactions import deploy, topup, mint, send, burn, update_token_metadata
+from ledaplex.transactions import deploy, topup, mint, send, burn, update_token_metadata
 from utils.execution_engine import execute
 
-class MetaplexAPI():
+class LedaplexAPI():
 
     def __init__(self, cfg):
         self.private_key = list(base58.b58decode(cfg["PRIVATE_KEY"]))[:32]
